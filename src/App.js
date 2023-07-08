@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
 	BrowserRouter as Router,
 	Routes,
 	Route,
 	Link,
 	useParams,
+	useNavigate,
 } from 'react-router-dom';
 
 const Menu = () => {
@@ -96,6 +97,7 @@ const Footer = () => (
 );
 
 const CreateNew = (props) => {
+	const navigate = useNavigate();
 	const [content, setContent] = useState('');
 	const [author, setAuthor] = useState('');
 	const [info, setInfo] = useState('');
@@ -108,6 +110,8 @@ const CreateNew = (props) => {
 			info,
 			votes: 0,
 		});
+		navigate('/');
+		props.setNotification(`A new anecdote was added: ${content}`);
 	};
 
 	return (
@@ -164,6 +168,14 @@ const App = () => {
 
 	const [notification, setNotification] = useState('');
 
+	useEffect(() => {
+		if (notification !== '') {
+			setTimeout(() => {
+				setNotification('');
+			}, 5000);
+		}
+	}, [notification]);
+
 	const addNew = (anecdote) => {
 		anecdote.id = Math.round(Math.random() * 10000);
 		setAnecdotes(anecdotes.concat(anecdote));
@@ -184,6 +196,7 @@ const App = () => {
 
 	return (
 		<div>
+			{notification && <div>{notification}</div>}
 			<h1>Software anecdotes</h1>
 			<Router>
 				<Menu />
@@ -193,7 +206,12 @@ const App = () => {
 					</Route>
 					<Route
 						path="/new"
-						element={<CreateNew addNew={addNew} />}
+						element={
+							<CreateNew
+								addNew={addNew}
+								setNotification={setNotification}
+							/>
+						}
 					></Route>
 					<Route
 						path="/"
