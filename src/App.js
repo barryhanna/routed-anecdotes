@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import useField from './hooks/useField';
 import {
 	BrowserRouter as Router,
 	Routes,
@@ -98,20 +99,22 @@ const Footer = () => (
 
 const CreateNew = (props) => {
 	const navigate = useNavigate();
-	const [content, setContent] = useState('');
-	const [author, setAuthor] = useState('');
-	const [info, setInfo] = useState('');
+	const content = useField('text');
+	const author = useField('text');
+	const info = useField('text');
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		props.addNew({
-			content,
-			author,
-			info,
+			content: content.value,
+			author: author.value,
+			info: info.value,
 			votes: 0,
 		});
 		navigate('/');
-		props.setNotification(`A new anecdote was added: ${content}`);
+		props.setNotification(
+			`A new anecdote was added: ${content.value}`
+		);
 	};
 
 	return (
@@ -121,25 +124,28 @@ const CreateNew = (props) => {
 				<div>
 					content
 					<input
+						type={content.type}
 						name="content"
-						value={content}
-						onChange={(e) => setContent(e.target.value)}
+						value={content.value}
+						onChange={content.onChange}
 					/>
 				</div>
 				<div>
 					author
 					<input
+						type={author.type}
 						name="author"
-						value={author}
-						onChange={(e) => setAuthor(e.target.value)}
+						value={author.value}
+						onChange={author.onChange}
 					/>
 				</div>
 				<div>
 					url for more info
 					<input
+						type={info.type}
 						name="info"
-						value={info}
-						onChange={(e) => setInfo(e.target.value)}
+						value={info.value}
+						onChange={info.onChange}
 					/>
 				</div>
 				<button>create</button>
