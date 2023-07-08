@@ -4,6 +4,7 @@ import {
 	Routes,
 	Route,
 	Link,
+	useParams,
 } from 'react-router-dom';
 
 const Menu = () => {
@@ -25,12 +26,35 @@ const Menu = () => {
 	);
 };
 
+const Anecdote = ({ anecdotes }) => {
+	const params = useParams();
+
+	const anecdoteContent = anecdotes.find(
+		(a) => a.id === Number(params.id)
+	);
+
+	if (!anecdoteContent) return <p>That anecdote wasn't found.</p>;
+
+	return (
+		<div>
+			<p>{anecdoteContent.content}</p>
+			<p>{anecdoteContent.author}</p>
+			<a href={`${anecdoteContent.info}`}>Read more...</a>
+			<p>Votes: {anecdoteContent.votes}</p>
+		</div>
+	);
+};
+
 const AnecdoteList = ({ anecdotes }) => (
 	<div>
 		<h2>Anecdotes</h2>
 		<ul>
 			{anecdotes.map((anecdote) => (
-				<li key={anecdote.id}>{anecdote.content}</li>
+				<li key={anecdote.id}>
+					<Link to={`/anecdotes/${anecdote.id}`}>
+						{anecdote.content}
+					</Link>
+				</li>
 			))}
 		</ul>
 	</div>
@@ -174,6 +198,10 @@ const App = () => {
 					<Route
 						path="/"
 						element={<AnecdoteList anecdotes={anecdotes} />}
+					/>
+					<Route
+						path="/anecdotes/:id"
+						element={<Anecdote anecdotes={anecdotes} />}
 					/>
 				</Routes>
 			</Router>
